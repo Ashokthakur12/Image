@@ -3,30 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snake Game with Ads</title>
+  <title>Snake Game with Galaxy Background and Remote Controls</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      text-align: center;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      background: url('https://www.w3schools.com/w3images/galaxy.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
     }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .game-container {
+      position: relative;
+      display: inline-block;
+      text-align: center;
+    }
+
     canvas {
       border: 2px solid #000;
       margin-top: 20px;
     }
-    .game-container {
-      position: relative;
-      display: inline-block;
+
+    .controls {
+      margin-top: 20px;
+      text-align: center;
     }
+
+    /* Gaming Remote Style Controls */
+    .control-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      width: 80px;
+      height: 80px;
+      margin: 5px;
+      border-radius: 50%;
+    }
+
+    .control-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* Layout for the controls */
+    .control-row {
+      display: flex;
+      justify-content: center;
+    }
+
+    .vertical-btns {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Ad Space */
     .ad-container {
       margin-top: 20px;
       height: 100px;
-      background-color: #eaeaea;
-      text-align: center;
-      line-height: 100px;
+      background-color: #333;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+
     .play-again {
       background-color: #28a745;
       color: white;
@@ -34,38 +81,21 @@
       border: none;
       font-size: 18px;
       cursor: pointer;
+      margin-top: 20px;
     }
+
     .play-again:hover {
       background-color: #218838;
     }
-    .controls {
-      margin-top: 20px;
-    }
-    .control-btn {
-      background-color: #007bff;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      margin: 5px;
-    }
-    .control-btn:hover {
-      background-color: #0056b3;
-    }
 
-    /* Adding the image as the background of the game */
+    /* Making sure the canvas container stays on top */
     .game-background {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background-image: url('https://media-hosting.imagekit.io//1bba0687b7ee4c2d/1000121260.jpg?Expires=1734982784&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=aegksIqDp1esHlgcjE4sUCrOnxx-0dSeuZZ1KTdWvQLJiLhVmio-58doUxJ5aPsH7ngrrBPFgN5i9s4SoADcN3re1S21sPDPKZU7G16bqb8lcCnLUpoJySKVmiUy012DMj2rKUt8bgs4uslUGlVakV-9l-4VtAZZ8uOtQrGqTH1pKJHp4fI~kXxfEe8~oSWz45sNd34D~-G2feeCNZ8NAHaYd6ueRBwN8BUIPUUBKE9gliV-3qt~4Pbo91aq3IcB4DagwfYQ4JNSEAqHYTMzfzphvNK1xrTjBaeStlhcDtVvBm9lRerW~eKSjuORCBvhWJW9kxjowVd~HxwUe5OlXg__');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.2; /* Make background image faint */
-      z-index: -1; /* Place it behind the game canvas */
+      z-index: -1;
     }
   </style>
 </head>
@@ -76,16 +106,23 @@
     <canvas id="gameCanvas" width="500" height="500"></canvas>
     <div class="game-background"></div>
   </div>
-  <br>
-  <button class="play-again" onclick="startGame()">Play Again</button>
 
-  <!-- Direction Controls -->
+  <!-- Direction Controls: Gaming Remote Style -->
   <div class="controls">
-    <button class="control-btn" onclick="changeDirection('left')">Left</button>
-    <button class="control-btn" onclick="changeDirection('up')">Up</button>
-    <button class="control-btn" onclick="changeDirection('right')">Right</button>
-    <button class="control-btn" onclick="changeDirection('down')">Down</button>
+    <div class="control-row">
+      <button class="control-btn" onclick="changeDirection('up')">↑</button>
+    </div>
+    <div class="control-row">
+      <button class="control-btn" onclick="changeDirection('left')">←</button>
+      <button class="control-btn" onclick="changeDirection('right')">→</button>
+    </div>
+    <div class="control-row">
+      <button class="control-btn" onclick="changeDirection('down')">↓</button>
+    </div>
   </div>
+
+  <!-- Play Again Button -->
+  <button class="play-again" onclick="startGame()">Play Again</button>
 
   <!-- Ad Space -->
   <div class="ad-container">
