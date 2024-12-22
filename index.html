@@ -90,6 +90,7 @@
             width: 40,
             height: 40,
             color: "yellow",
+            speed: 5  // Slow speed for smoother movement
         };
 
         class Enemy {
@@ -98,7 +99,7 @@
                 this.y = -50;
                 this.width = 50;
                 this.height = 50;
-                this.speed = Math.random() * 3 + 2;
+                this.speed = Math.random() * 1.5 + 1;  // Slower enemy speed
                 this.color = "red";
             }
 
@@ -225,9 +226,9 @@
             if (gameOver) return;
 
             if (event.key === "ArrowLeft" && player.x > 0) {
-                player.x -= 20;
+                player.x -= player.speed;  // Slow speed
             } else if (event.key === "ArrowRight" && player.x < canvas.width - player.width) {
-                player.x += 20;
+                player.x += player.speed;  // Slow speed
             }
         }
 
