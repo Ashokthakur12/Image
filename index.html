@@ -1,283 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enhanced Snake Game</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: url('https://www.w3schools.com/w3images/galaxy.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shooting Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
 
-    h1 {
-      text-align: center;
-      margin-top: 20px;
-    }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-image: url('https://www.w3schools.com/w3images/galaxy.jpg');
+            background-size: cover;
+        }
 
-    .game-container {
-      position: relative;
-      display: inline-block;
-      text-align: center;
-      margin-top: 40px;
-    }
+        .score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: white;
+            z-index: 1;
+        }
 
-    canvas {
-      border: 2px solid #000;
-      margin-top: 20px;
-    }
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: red;
+            z-index: 1;
+        }
 
-    .controls {
-      margin-top: 20px;
-      text-align: center;
-    }
+        .play-again {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
 
-    /* Gaming Remote Style Controls */
-    .control-btn {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      width: 80px;
-      height: 80px;
-      margin: 5px;
-      border-radius: 50%;
-    }
-
-    .control-btn:hover {
-      background-color: #0056b3;
-    }
-
-    /* Layout for the controls */
-    .control-row {
-      display: flex;
-      justify-content: center;
-    }
-
-    .vertical-btns {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .score-container {
-      text-align: center;
-      font-size: 24px;
-      margin-top: 20px;
-    }
-
-    /* Ad Space */
-    .ad-container {
-      margin-top: 20px;
-      height: 100px;
-      background-color: #333;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .play-again {
-      background-color: #28a745;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-
-    .play-again:hover {
-      background-color: #218838;
-    }
-
-    /* Game Over Message */
-    .game-over {
-      text-align: center;
-      font-size: 36px;
-      color: red;
-      display: none;
-    }
-
-    .game-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: -1;
-    }
-  </style>
+        .play-again:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
+    <canvas id="gameCanvas"></canvas>
+    <div class="score">Score: <span id="score">0</span></div>
+    <div class="game-over" id="gameOver" style="display: none;">Game Over!</div>
+    <button class="play-again" id="playAgainBtn" style="display: none;">Play Again</button>
 
-  <h1>Enhanced Snake Game</h1>
-  <div class="game-container">
-    <canvas id="gameCanvas" width="600" height="600"></canvas>
-    <div class="game-background"></div>
-  </div>
+    <audio id="shootSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
-  <!-- Direction Controls: Gaming Remote Style -->
-  <div class="controls">
-    <div class="control-row">
-      <button class="control-btn" onclick="changeDirection('up')">↑</button>
-    </div>
-    <div class="control-row">
-      <button class="control-btn" onclick="changeDirection('left')">←</button>
-      <button class="control-btn" onclick="changeDirection('right')">→</button>
-    </div>
-    <div class="control-row">
-      <button class="control-btn" onclick="changeDirection('down')">↓</button>
-    </div>
-  </div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const gameOverMessage = document.getElementById('gameOver');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const shootSound = document.getElementById('shootSound');
 
-  <!-- Score Display -->
-  <div class="score-container">
-    <p>Score: <span id="score">0</span></p>
-  </div>
+        const canvasWidth = window.innerWidth;
+        const canvasHeight = window.innerHeight;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
 
-  <!-- Play Again Button -->
-  <button class="play-again" onclick="startGame()">Play Again</button>
+        let enemies = [];
+        let bullets = [];
+        let score = 0;
+        let gameOver = false;
 
-  <!-- Game Over Message -->
-  <div class="game-over" id="gameOverMessage">Game Over!</div>
+        // Player's gun position
+        const player = {
+            x: canvasWidth / 2,
+            y: canvasHeight - 100,
+            width: 40,
+            height: 40,
+            color: "yellow",
+        };
 
-  <!-- Ad Space -->
-  <div class="ad-container">
-    <a href="https://www.profitablecpmrate.com/szzecg3n?key=5aef42f02f7fda344aacbb6245bb9b27" target="_blank">
-      <p>Click here for great offers!</p>
-    </a>
-  </div>
+        class Enemy {
+            constructor() {
+                this.x = Math.random() * (canvas.width - 50);
+                this.y = -50;
+                this.width = 50;
+                this.height = 50;
+                this.speed = Math.random() * 3 + 2;
+                this.color = "red";
+            }
 
-  <script>
-    let canvas = document.getElementById("gameCanvas");
-    let ctx = canvas.getContext("2d");
+            move() {
+                this.y += this.speed;
+            }
 
-    const scale = 20;
-    const rows = canvas.height / scale;
-    const columns = canvas.width / scale;
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
 
-    let snake;
-    let fruit;
-    let game;
-    let score;
-    let gameOver = false;
+            isOutOfBounds() {
+                return this.y > canvas.height;
+            }
 
-    let direction = 'right'; // Default direction
-
-    function startGame() {
-      score = 0;
-      document.getElementById("score").textContent = score;
-      snake = new Snake();
-      fruit = new Fruit();
-      gameOver = false;
-      document.getElementById("gameOverMessage").style.display = "none";
-      game = setInterval(update, 100);
-    }
-
-    function update() {
-      if (gameOver) return;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      snake.update();
-      snake.draw();
-      fruit.draw();
-
-      if (snake.eat(fruit)) {
-        fruit.randomize();
-        score++;
-        document.getElementById("score").textContent = score;
-      }
-
-      if (snake.checkCollision()) {
-        clearInterval(game);
-        gameOver = true;
-        document.getElementById("gameOverMessage").style.display = "block";
-      }
-    }
-
-    class Snake {
-      constructor() {
-        this.body = [{ x: 10, y: 10 }];
-      }
-
-      update() {
-        let head = this.body[this.body.length - 1];
-
-        let newHead;
-        if (direction === "right") {
-          newHead = { x: head.x + 1, y: head.y };
-        } else if (direction === "left") {
-          newHead = { x: head.x - 1, y: head.y };
-        } else if (direction === "up") {
-          newHead = { x: head.x, y: head.y - 1 };
-        } else if (direction === "down") {
-          newHead = { x: head.x, y: head.y + 1 };
+            collide(bullet) {
+                return bullet.x < this.x + this.width &&
+                       bullet.x + bullet.width > this.x &&
+                       bullet.y < this.y + this.height &&
+                       bullet.y + bullet.height > this.y;
+            }
         }
 
-        this.body.push(newHead);
-        this.body.shift();
-      }
+        class Bullet {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 5;
+                this.height = 10;
+                this.speed = 5;
+                this.color = "white";
+            }
 
-      draw() {
-        for (let i = 0; i < this.body.length; i++) {
-          let part = this.body[i];
-          ctx.fillStyle = i === this.body.length - 1 ? "green" : "black";
-          ctx.fillRect(part.x * scale, part.y * scale, scale, scale);
+            move() {
+                this.y -= this.speed;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+            }
+
+            isOutOfBounds() {
+                return this.y < 0;
+            }
         }
-      }
 
-      eat(fruit) {
-        let head = this.body[this.body.length - 1];
-        return head.x === fruit.position.x && head.y === fruit.position.y;
-      }
-
-      checkCollision() {
-        let head = this.body[this.body.length - 1];
-        if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
-          return true;
+        function generateEnemy() {
+            if (!gameOver) {
+                let enemy = new Enemy();
+                enemies.push(enemy);
+            }
         }
-        for (let i = 0; i < this.body.length - 1; i++) {
-          if (this.body[i].x === head.x && this.body[i].y === head.y) {
-            return true;
-          }
+
+        function handleBulletEnemyCollision() {
+            for (let i = 0; i < bullets.length; i++) {
+                for (let j = 0; j < enemies.length; j++) {
+                    if (enemies[j].collide(bullets[i])) {
+                        enemies.splice(j, 1);
+                        bullets.splice(i, 1);
+                        score++;
+                        scoreElement.innerText = `Score: ${score}`;
+                        break;
+                    }
+                }
+            }
         }
-        return false;
-      }
-    }
 
-    class Fruit {
-      constructor() {
-        this.position = { x: Math.floor(Math.random() * columns), y: Math.floor(Math.random() * rows) };
-      }
+        function drawPlayer() {
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
 
-      draw() {
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.position.x * scale, this.position.y * scale, scale, scale);
-      }
+        function drawEnemies() {
+            for (let i = 0; i < enemies.length; i++) {
+                enemies[i].move();
+                enemies[i].draw();
 
-      randomize() {
-        this.position = { x: Math.floor(Math.random() * columns), y: Math.floor(Math.random() * rows) };
-      }
-    }
+                if (enemies[i].isOutOfBounds()) {
+                    enemies.splice(i, 1);
+                    gameOver = true;
+                    gameOverMessage.style.display = 'block';
+                    playAgainBtn.style.display = 'block';
+                    break;
+                }
+            }
+        }
 
-    // Function to change the direction
-    function changeDirection(newDirection) {
-      if (newDirection === "left" && direction !== "right") {
-        direction = "left";
-      } else if (newDirection === "up" && direction !== "down") {
-        direction = "up";
-      } else if (newDirection === "right" && direction !== "left") {
-        direction = "right";
-      } else if (newDirection === "down" && direction !== "up") {
-        direction = "down";
-      }
-    }
+        function drawBullets() {
+            for (let i = 0; i < bullets.length; i++) {
+                bullets[i].move();
+                bullets[i].draw();
 
-    // Redirects to the ad link every 15 seconds
-    setInterval(function () {
-      window.open("https://www.profitablecpmrate.com/szzecg3n?key=5aef42f02f7
+                if (bullets[i].isOutOfBounds()) {
+                    bullets.splice(i, 1);
+                }
+            }
+        }
+
+        function update() {
+            if (gameOver) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawPlayer();
+            drawEnemies();
+            drawBullets();
+            handleBulletEnemyCollision();
+
+            if (Math.random() < 0.02) generateEnemy();
+        }
+
+        function shootGun(event) {
+            if (gameOver) return;
+
+            shootSound.play();
+
+            const bullet = new Bullet(player.x + player.width / 2 - 2.5, player.y);
+            bullets.push(bullet);
+        }
+
+        function movePlayer(event) {
+            if (gameOver) return;
+
+            if (event.key === "ArrowLeft" && player.x > 0) {
+                player.x -= 20;
+            } else if (event.key === "ArrowRight" && player.x < canvas.width - player.width) {
+                player.x += 20;
+            }
+        }
+
+        function restartGame() {
+            gameOver = false;
+            enemies = [];
+            bullets = [];
+            score = 0;
+            scoreElement.innerText = `Score: ${score}`;
+            gameOverMessage.style.display = 'none';
+            playAgainBtn.style.display = 'none';
+            startGame();
+        }
+
+        function startGame() {
+            setInterval(update, 1000 / 60);
+
+            // Listen for shooting event
+            canvas.addEventListener("click", shootGun);
+
+            // Listen for player movement
+            window.addEventListener("keydown", movePlayer);
+        }
+
+        playAgainBtn.addEventListener("click", restartGame);
+
+        // Start the game
+        startGame();
+    </script>
+</body>
+</html>
