@@ -16,6 +16,10 @@
       border: 2px solid #000;
       margin-top: 20px;
     }
+    .game-container {
+      position: relative;
+      display: inline-block;
+    }
     .ad-container {
       margin-top: 20px;
       height: 100px;
@@ -49,12 +53,29 @@
     .control-btn:hover {
       background-color: #0056b3;
     }
+
+    /* Adding the image as the background of the game */
+    .game-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('https://media-hosting.imagekit.io//1bba0687b7ee4c2d/1000121260.jpg?Expires=1734982784&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=aegksIqDp1esHlgcjE4sUCrOnxx-0dSeuZZ1KTdWvQLJiLhVmio-58doUxJ5aPsH7ngrrBPFgN5i9s4SoADcN3re1S21sPDPKZU7G16bqb8lcCnLUpoJySKVmiUy012DMj2rKUt8bgs4uslUGlVakV-9l-4VtAZZ8uOtQrGqTH1pKJHp4fI~kXxfEe8~oSWz45sNd34D~-G2feeCNZ8NAHaYd6ueRBwN8BUIPUUBKE9gliV-3qt~4Pbo91aq3IcB4DagwfYQ4JNSEAqHYTMzfzphvNK1xrTjBaeStlhcDtVvBm9lRerW~eKSjuORCBvhWJW9kxjowVd~HxwUe5OlXg__');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.2; /* Make background image faint */
+      z-index: -1; /* Place it behind the game canvas */
+    }
   </style>
 </head>
 <body>
 
   <h1>Snake Game</h1>
-  <canvas id="gameCanvas" width="300" height="300"></canvas>
+  <div class="game-container">
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
+    <div class="game-background"></div>
+  </div>
   <br>
   <button class="play-again" onclick="startGame()">Play Again</button>
 
