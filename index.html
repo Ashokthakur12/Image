@@ -3,63 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Full Video Watch</title>
-
-  <!-- Open Graph Meta Tags for Facebook -->
-  <meta property="og:image" content="https://i.postimg.cc/18bjNc3p/Screenshot-2024-12-21-12-06-42-066-com-android-chrome.jpg">
-  <meta property="og:title" content="Full Video Watch">
-  <meta property="og:description" content="Watch full video here.">
-  <meta property="og:url" content="YOUR_URL">
-  <meta property="og:type" content="website">
-
+  <title>Simple Game with Ads</title>
   <style>
-    /* Style for image and play button */
-    .image-container {
-      position: relative;
-      display: inline-block;
+    body {
+      font-family: Arial, sans-serif;
       text-align: center;
+      background-color: #f0f0f0;
     }
 
-    .image-container img {
-      width: 100%;
-      height: auto;
+    /* Basic Game Area */
+    #game-area {
+      width: 300px;
+      height: 300px;
+      background-color: #c0c0c0;
+      margin: 20px auto;
+      position: relative;
     }
 
-    .play-btn {
+    #game-box {
+      width: 50px;
+      height: 50px;
+      background-color: red;
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 30px;
-      color: white;
-      background: rgba(0, 0, 0, 0.5);
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
+      top: 125px;
+      left: 125px;
     }
 
-    .play-btn:hover {
-      background: rgba(0, 0, 0, 0.7);
+    /* Ad Banner */
+    #ad-banner {
+      width: 300px;
+      height: 100px;
+      margin: 20px auto;
+      background-color: #ddd;
     }
   </style>
 </head>
 <body>
 
-  <div class="image-container">
-    <!-- Image Section with new image -->
-    <img id="image-display" src="https://i.postimg.cc/18bjNc3p/Screenshot-2024-12-21-12-06-42-066-com-android-chrome.jpg" alt="Image" class="image">
+  <h1>Simple Game</h1>
+  <div id="game-area">
+    <div id="game-box"></div>
+  </div>
 
-    <!-- Play Button in the center of the image -->
-    <button id="play-button" class="play-btn">▶</button>
+  <!-- Ad Banner: Replace this with your ad code -->
+  <div id="ad-banner">
+    <iframe src="https://www.profitablecpmrate.com/szzecg3n?key=5aef42f02f7fda344aacbb6245bb9b27" width="300" height="100" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
   </div>
 
   <script>
-    // Ad URL
-    const adUrl = "https://www.profitablecpmrate.com/szzecg3n?key=5aef42f02f7fda344aacbb6245bb9b27";
+    // Game Logic: Move the box with arrow keys
+    const gameBox = document.getElementById("game-box");
 
-    // Play button click event
-    document.getElementById("play-button").addEventListener("click", function() {
-      window.open(adUrl, "_blank"); // Open the ad in a new tab
+    document.addEventListener("keydown", function(event) {
+      const style = window.getComputedStyle(gameBox);
+      let left = parseInt(style.left);
+      let top = parseInt(style.top);
+
+      if (event.key === "ArrowRight") {
+        left += 10;
+      }
+      if (event.key === "ArrowLeft") {
+        left -= 10;
+      }
+      if (event.key === "ArrowDown") {
+        top += 10;
+      }
+      if (event.key === "ArrowUp") {
+        top -= 10;
+      }
+
+      // Move the box within the game area
+      if (left >= 0 && left <= 250) {
+        gameBox.style.left = left + "px";
+      }
+      if (top >= 0 && top <= 250) {
+        gameBox.style.top = top + "px";
+      }
     });
   </script>
 
