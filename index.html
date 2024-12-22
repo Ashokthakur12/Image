@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clickable Image Example with Play Button</title>
+    <title>Clickable Image with Custom Link</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,7 +16,7 @@
             cursor: pointer;
         }
         .clickable-image {
-            max-width: 100%;
+            width: 100%;
             height: auto;
         }
         .play-button {
@@ -31,22 +31,20 @@
             padding: 20px;
             cursor: pointer;
         }
-        .play-button:hover {
-            background-color: rgba(0, 0, 0, 0.7);
-        }
     </style>
 </head>
 <body>
-    <h1>Full Video watch</h1>
+
+    <h1>Welcome to My Clickable Image Page</h1>
     <p>Click on the image below to visit the website:</p>
 
-    <!-- Clickable image with play button -->
-    <a href="https://www.profitablecpmrate.com/szzecg3n?key=5aef42f02f7fda344aacbb6245bb9b27" target="_blank">
-        <div class="clickable-image-container">
-            <img src="https://media-hosting.imagekit.io//1bba0687b7ee4c2d/1000121260.jpg?Expires=1734982784&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=aegksIqDp1esHlgcjE4sUCrOnxx-0dSeuZZ1KTdWvQLJiLhVmio-58doUxJ5aPsH7ngrrBPFgN5i9s4SoADcN3re1S21sPDPKZU7G16bqb8lcCnLUpoJySKVmiUy012DMj2rKUt8bgs4uslUGlVakV-9l-4VtAZZ8uOtQrGqTH1pKJHp4fI~kXxfEe8~oSWz45sNd34D~-G2feeCNZ8NAHaYd6ueRBwN8BUIPUUBKE9gliV-3qt~4Pbo91aq3IcB4DagwfYQ4JNSEAqHYTMzfzphvNK1xrTjBaeStlhcDtVvBm9lRerW~eKSjuORCBvhWJW9kxjowVd~HxwUe5OlXg__" alt="Clickable Image" class="clickable-image">
-            <div class="play-button">▶</div> <!-- Play button icon -->
-        </div>
-    </a>
+    <div class="clickable-image-container">
+        <!-- Clickable Image -->
+        <a href="https://your-custom-link.com" target="_blank">
+            <img src="https://your-image-url.com/your-image.jpg" alt="Clickable Image" class="clickable-image">
+            <div class="play-button">▶</div> <!-- Play Button Icon -->
+        </a>
+    </div>
 
 </body>
 </html>
