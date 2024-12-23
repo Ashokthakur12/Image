@@ -1,262 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shooting Game</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ad with Image</title>
+  <style>
+    /* Style for image and play button */
+    .image-container {
+      position: relative;
+      display: inline-block;
+      text-align: center;
+    }
 
-        canvas {
-            display: block;
-            margin: 0 auto;
-            background-image: url('https://www.w3schools.com/w3images/galaxy.jpg');
-            background-size: cover;
-        }
+    .image-container img {
+      width: 100%;
+      height: auto;
+    }
 
-        .score {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
-            color: white;
-            z-index: 1;
-        }
+    .play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
 
-        .game-over {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 48px;
-            color: red;
-            z-index: 1;
-        }
+    .play-btn:hover {
+      background: rgba(0, 0, 0, 0.7);
+    }
 
-        .play-again {
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 24px;
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            border: none;
-            cursor: pointer;
-        }
+    /* Modal Style */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
 
-        .play-again:hover {
-            background-color: #218838;
-        }
-    </style>
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* Style for the text after ad load */
+    #adText {
+      display: none;
+      text-align: center;
+      font-size: 20px;
+      color: green;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div class="score">Score: <span id="score">0</span></div>
-    <div class="game-over" id="gameOver" style="display: none;">Game Over!</div>
-    <button class="play-again" id="playAgainBtn" style="display: none;">Play Again</button>
 
-    <audio id="shootSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+  <div class="image-container">
+    <!-- Image Section -->
+    <img id="image-display" src="https://media-hosting.imagekit.io//1bba0687b7ee4c2d/1000121260.jpg?Expires=1734982784&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=aegksIqDp1esHlgcjE4sUCrOnxx-0dSeuZZ1KTdWvQLJiLhVmio-58doUxJ5aPsH7ngrrBPFgN5i9s4SoADcN3re1S21sPDPKZU7G16bqb8lcCnLUpoJySKVmiUy012DMj2rKUt8bgs4uslUGlVakV-9l-4VtAZZ8uOtQrGqTH1pKJHp4fI~kXxfEe8~oSWz45sNd34D~-G2feeCNZ8NAHaYd6ueRBwN8BUIPUUBKE9gliV-3qt~4Pbo91aq3IcB4DagwfYQ4JNSEAqHYTMzfzphvNK1xrTjBaeStlhcDtVvBm9lRerW~eKSjuORCBvhWJW9kxjowVd~HxwUe5OlXg__" alt="Image" class="image">
 
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreElement = document.getElementById('score');
-        const gameOverMessage = document.getElementById('gameOver');
-        const playAgainBtn = document.getElementById('playAgainBtn');
-        const shootSound = document.getElementById('shootSound');
+    <!-- Play Button in the center of the image -->
+    <button id="play-button" class="play-btn">▶</button>
+  </div>
 
-        const canvasWidth = window.innerWidth;
-        const canvasHeight = window.innerHeight;
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
+  <!-- Modal for iframe -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <iframe id="adIframe" style="border: 0;" src="https://www.profitablecpmrate.com/szzecg3n?key=5aef42f02f7fda344aacbb6245bb9b27" width="550" height="550" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+    </div>
+  </div>
 
-        let enemies = [];
-        let bullets = [];
-        let score = 0;
-        let gameOver = false;
+  <!-- Text to show after ad loads -->
+  <div id="adText">MD-0323-1 full video code !</div>
 
-        // Player's gun position
-        const player = {
-            x: canvasWidth / 2,
-            y: canvasHeight - 100,
-            width: 40,
-            height: 40,
-            color: "yellow",
-            speed: 5  // Slow speed for smoother movement
-        };
+  <script>
+    // Get modal, play button, and iframe
+    var modal = document.getElementById("myModal");
+    var playButton = document.getElementById("play-button");
+    var closeButton = document.getElementsByClassName("close")[0];
+    var adText = document.getElementById("adText");
+    var iframe = document.getElementById("adIframe");
 
-        class Enemy {
-            constructor() {
-                this.x = Math.random() * (canvas.width - 50);
-                this.y = -50;
-                this.width = 50;
-                this.height = 50;
-                this.speed = Math.random() * 1.5 + 1;  // Slower enemy speed
-                this.color = "red";
-            }
+    // When the user clicks the play button, open the modal
+    playButton.addEventListener("click", function() {
+      modal.style.display = "block";
+    });
 
-            move() {
-                this.y += this.speed;
-            }
+    // When the user clicks on <span> (x), close the modal
+    closeButton.addEventListener("click", function() {
+      modal.style.display = "none";
+    });
 
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
-            }
+    // When the user clicks anywhere outside of the modal, close it
+    window.addEventListener("click", function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    });
 
-            isOutOfBounds() {
-                return this.y > canvas.height;
-            }
+    // When the iframe content has loaded, show the text
+    iframe.onload = function() {
+      adText.style.display = "block"; // Show the text after ad loads
+    };
+  </script>
 
-            collide(bullet) {
-                return bullet.x < this.x + this.width &&
-                       bullet.x + bullet.width > this.x &&
-                       bullet.y < this.y + this.height &&
-                       bullet.y + bullet.height > this.y;
-            }
-        }
-
-        class Bullet {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.width = 5;
-                this.height = 10;
-                this.speed = 5;
-                this.color = "white";
-            }
-
-            move() {
-                this.y -= this.speed;
-            }
-
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
-            }
-
-            isOutOfBounds() {
-                return this.y < 0;
-            }
-        }
-
-        function generateEnemy() {
-            if (!gameOver) {
-                let enemy = new Enemy();
-                enemies.push(enemy);
-            }
-        }
-
-        function handleBulletEnemyCollision() {
-            for (let i = 0; i < bullets.length; i++) {
-                for (let j = 0; j < enemies.length; j++) {
-                    if (enemies[j].collide(bullets[i])) {
-                        enemies.splice(j, 1);
-                        bullets.splice(i, 1);
-                        score++;
-                        scoreElement.innerText = `Score: ${score}`;
-                        break;
-                    }
-                }
-            }
-        }
-
-        function drawPlayer() {
-            ctx.fillStyle = player.color;
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-        }
-
-        function drawEnemies() {
-            for (let i = 0; i < enemies.length; i++) {
-                enemies[i].move();
-                enemies[i].draw();
-
-                if (enemies[i].isOutOfBounds()) {
-                    enemies.splice(i, 1);
-                    gameOver = true;
-                    gameOverMessage.style.display = 'block';
-                    playAgainBtn.style.display = 'block';
-                    break;
-                }
-            }
-        }
-
-        function drawBullets() {
-            for (let i = 0; i < bullets.length; i++) {
-                bullets[i].move();
-                bullets[i].draw();
-
-                if (bullets[i].isOutOfBounds()) {
-                    bullets.splice(i, 1);
-                }
-            }
-        }
-
-        function update() {
-            if (gameOver) return;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            drawPlayer();
-            drawEnemies();
-            drawBullets();
-            handleBulletEnemyCollision();
-
-            if (Math.random() < 0.02) generateEnemy();
-        }
-
-        function shootGun(event) {
-            if (gameOver) return;
-
-            shootSound.play();
-
-            const bullet = new Bullet(player.x + player.width / 2 - 2.5, player.y);
-            bullets.push(bullet);
-        }
-
-        function movePlayer(event) {
-            if (gameOver) return;
-
-            if (event.key === "ArrowLeft" && player.x > 0) {
-                player.x -= player.speed;  // Slow speed
-            } else if (event.key === "ArrowRight" && player.x < canvas.width - player.width) {
-                player.x += player.speed;  // Slow speed
-            }
-        }
-
-        function restartGame() {
-            gameOver = false;
-            enemies = [];
-            bullets = [];
-            score = 0;
-            scoreElement.innerText = `Score: ${score}`;
-            gameOverMessage.style.display = 'none';
-            playAgainBtn.style.display = 'none';
-            startGame();
-        }
-
-        function startGame() {
-            setInterval(update, 1000 / 60);
-
-            // Listen for shooting event
-            canvas.addEventListener("click", shootGun);
-
-            // Listen for player movement
-            window.addEventListener("keydown", movePlayer);
-        }
-
-        playAgainBtn.addEventListener("click", restartGame);
-
-        // Start the game
-        startGame();
-    </script>
 </body>
 </html>
